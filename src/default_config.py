@@ -25,15 +25,15 @@ def get_default_config():
     conf.gamma = 0.1
     conf.epochs = 25
     conf.momentum = 0.9
-    conf.batch_size = 1024
+    conf.batch_size = 512
 
     # model
-    conf.num_classes = 3
-    conf.input_channel = 3
+    conf.num_classes = 2
+    conf.input_channel = 2
     conf.embedding_size = 128
 
     # dataset
-    conf.train_root_path = './datasets/rgb_image'
+    conf.train_root_path = './datasets/RGB_Images'
 
     # save file path
     conf.snapshot_dir_path = './saved_logs/snapshot'
