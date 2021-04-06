@@ -26,9 +26,6 @@ class DatasetFolderFT(datasets.ImageFolder):
 
     def __getitem__(self, index):
         path, target = self.samples[index]
-        print("self.samples", self.samples)
-        print("path", path)
-        print("target", target)
         sample = self.loader(path)
         # generate the FT picture of the sample
         ft_sample = generate_FT(sample)
