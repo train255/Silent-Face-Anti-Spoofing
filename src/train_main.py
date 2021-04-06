@@ -120,6 +120,7 @@ class TrainMain:
         model = MultiFTNet(**param).to(self.conf.device)
         model = torch.nn.DataParallel(model, self.conf.devices)
         if self.conf.checkpoint != "":
+            print("Load checkpoint", self.conf.checkpoint)
             model.load_state_dict(torch.load(self.conf.checkpoint))
         model.to(self.conf.device)
         return model
