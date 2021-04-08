@@ -68,7 +68,8 @@ class TrainMain:
                 running_loss_ft += loss_ft
                 running_loss += loss
                 running_acc += acc
-
+                print("running_loss", running_loss)
+                print("running_acc", running_acc)
                 self.step += 1
 
                 if self.step % self.board_loss_every == 0 and self.step != 0:
