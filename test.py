@@ -44,6 +44,7 @@ def test(image_name, model_dir, device_id, num_classes):
     
     test_speed = 0
     # sum the prediction from single model's result
+    count_model = 0
     for model_name in os.listdir(model_dir):
         h_input, w_input, model_type, scale = parse_model_name(model_name)
         param = {
@@ -59,11 +60,12 @@ def test(image_name, model_dir, device_id, num_classes):
         img = image_cropper.crop(**param)
         start = time.time()
         prediction += model_test.predict(img, os.path.join(model_dir, model_name))
+        count_model = count_model + 1
         test_speed += time.time()-start
 
     # draw result of prediction
     label = np.argmax(prediction)
-    value = prediction[0][label]/2
+    value = prediction[0][label]/count_model
     if label == 1:
         print("Image '{}' is Real Face. Score: {:.2f}.".format(image_name, value))
         result_text = "RealFace Score: {:.2f}".format(value)
