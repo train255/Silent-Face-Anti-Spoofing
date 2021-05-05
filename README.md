@@ -96,7 +96,7 @@ python train.py --device_ids 0  --patch_info your_patch
  ./resources/detection_model 检测器模型  
  ./images/sample 测试图片  
  ```
- python test.py --image_name your_image_name
+ python test.py --image_name your_image_name --num_classes 3
  ```      
 ## 相关资源  
 [百度网盘](https://pan.baidu.com/s/1u3BPHIEU4GmTti0G3LIDGQ)提取码：6d8q  

@@ -101,7 +101,7 @@ python train.py --device_ids 0  --patch_info your_patch
  ./resources/detection_model Detector  
  ./images/sample Test Images  
  ```
- python test.py --image_name your_image_name
+ python test.py --image_name your_image_name --num_classes 3
  ```    
 ## Reference 
 - Detector [RetinaFace](https://github.com/deepinsight/insightface/tree/master/RetinaFace)  
