@@ -14,6 +14,7 @@ import torch.nn.functional as F
 
 
 from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
+from src.model_lib.MultiFTNet import MultiFTNet
 from src.data_io import transform as trans
 from src.utility import get_kernel, parse_model_name
 
@@ -61,7 +62,14 @@ class AntiSpoofPredict(Detection):
         model_name = os.path.basename(model_path)
         h_input, w_input, model_type, _ = parse_model_name(model_name)
         self.kernel_size = get_kernel(h_input, w_input,)
-        self.model = MODEL_MAPPING[model_type](conv6_kernel=self.kernel_size).to(self.device)
+        # self.model = MODEL_MAPPING[model_type](conv6_kernel=self.kernel_size).to(self.device)
+        params = {
+            'embedding_size': 128,
+            'conv6_kernel': (5,5),
+            'num_classes': 2,
+            'img_channel': 3
+        }
+        self.model = MultiFTNet(**params)
 
         # load model weight
         state_dict = torch.load(model_path, map_location=self.device)

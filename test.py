@@ -35,11 +35,13 @@ def test(image_name, model_dir, device_id):
     model_test = AntiSpoofPredict(device_id)
     image_cropper = CropImage()
     image = cv2.imread(SAMPLE_IMAGE_PATH + image_name)
-    result = check_image(image)
-    if result is False:
-        return
+    # result = check_image(image)
+    # if result is False:
+    #     return
     image_bbox = model_test.get_bbox(image)
-    prediction = np.zeros((1, 3))
+	# if you have n clasees => prediction = np.zeros((1, n))
+    prediction = np.zeros((1, 2))
+	
     test_speed = 0
     # sum the prediction from single model's result
     for model_name in os.listdir(model_dir):

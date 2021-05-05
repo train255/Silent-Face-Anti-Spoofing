@@ -38,7 +38,8 @@ class MultiFTNet(nn.Module):
         self.num_classes = num_classes
         self.model = MiniFASNetV2SE(embedding_size=embedding_size, conv6_kernel=conv6_kernel,
                                       num_classes=num_classes, img_channel=img_channel)
-        self.FTGenerator = FTGenerator(in_channels=128)
+        if self.training:
+            self.FTGenerator = FTGenerator(in_channels=128)
         self._initialize_weights()
 
     def _initialize_weights(self):
