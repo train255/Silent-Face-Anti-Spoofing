@@ -25,16 +25,10 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
     model_test = AntiSpoofPredict(device_id)
     image_cropper = CropImage()
 
-    onlyfiles = [name for path, subdirs, files in os.walk(src_dir) for name in files]
+    onlyfiles = [os.path.join(path, name) for path, subdirs, files in os.walk(src_dir) for name in files]
 
-    print("Len files", len(onlyfiles))
-
-    with open('your_file.txt', 'w') as f:
-        for item in onlyfiles:
-            f.write("%s\n" % item)
-
-    for f in onlyfiles:
-        file_path = join(src_dir, f)
+    for file_path in onlyfiles:
+        file_name = os.path.basename(file_path)
         image = cv2.imread(file_path)
         image_bbox = model_test.get_bbox(image)
         
@@ -76,7 +70,7 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
             if not exists(dst_path_image):
                 os.makedirs(dst_path_image)
 
-            cv2.imwrite(join(dst_path_image, f), cropped["image"])
+            cv2.imwrite(join(dst_path_image, file_name), cropped["image"])
 
 
 if __name__ == "__main__":
