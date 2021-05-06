@@ -25,11 +25,7 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
     model_test = AntiSpoofPredict(device_id)
     image_cropper = CropImage()
 
-    print(src_dir)
-
-    onlyfiles = [f for f in listdir(src_dir) if isfile(join(src_dir, f))]
-
-    print("Files", len(onlyfiles))
+    onlyfiles = [name for path, subdirs, files in os.walk(src_dir) for name in files]
 
     for f in onlyfiles:
         file_path = join(src_dir, f)
@@ -76,7 +72,6 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
 
             cv2.imwrite(join(dst_path_image, f), cropped["image"])
 
-        print(f)
 
 if __name__ == "__main__":
     desc = "test"
