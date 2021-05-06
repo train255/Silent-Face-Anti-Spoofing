@@ -28,6 +28,9 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
     print(src_dir)
 
     onlyfiles = [f for f in listdir(src_dir) if isfile(join(src_dir, f))]
+
+    print("Files", len(onlyfiles))
+
     for f in onlyfiles:
         file_path = join(src_dir, f)
         image = cv2.imread(file_path)
@@ -73,6 +76,7 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
 
             cv2.imwrite(join(dst_path_image, f), cropped["image"])
 
+        print(f)
 
 if __name__ == "__main__":
     desc = "test"
