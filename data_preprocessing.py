@@ -65,12 +65,13 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
             value = prediction[0][label]/count_model
             directory = join(dst_dir, str(label))
         
-        for cropped in image_cropped:
-            dst_path_image = join(directory, cropped["scale"])
-            if not exists(dst_path_image):
-                os.makedirs(dst_path_image)
+        if (threshold > 0 and value > threshold) or (threshold == 0):
+            for cropped in image_cropped:
+                dst_path_image = join(directory, cropped["scale"])
+                if not exists(dst_path_image):
+                    os.makedirs(dst_path_image)
 
-            cv2.imwrite(join(dst_path_image, file_name), cropped["image"])
+                cv2.imwrite(join(dst_path_image, file_name), cropped["image"])
 
 
 if __name__ == "__main__":
