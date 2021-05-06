@@ -27,7 +27,11 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
 
     onlyfiles = [name for path, subdirs, files in os.walk(src_dir) for name in files]
 
-    print(onlyfiles)
+    print("Len files", len(onlyfiles))
+
+    with open('your_file.txt', 'w') as f:
+    for item in onlyfiles:
+        f.write("%s\n" % item)
 
     for f in onlyfiles:
         file_path = join(src_dir, f)
