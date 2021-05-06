@@ -27,6 +27,8 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
 
     onlyfiles = [name for path, subdirs, files in os.walk(src_dir) for name in files]
 
+    print(onlyfiles)
+
     for f in onlyfiles:
         file_path = join(src_dir, f)
         image = cv2.imread(file_path)
