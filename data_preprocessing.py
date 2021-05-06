@@ -65,7 +65,7 @@ def preprocessing(model_dir, device_id, num_classes, src_dir, dst_dir, threshold
             value = prediction[0][label]/count_model
             directory = join(dst_dir, str(label))
         
-        if (threshold > 0 and value > threshold) or (threshold == 0):
+        if (threshold > 0 and value >= threshold) or (threshold == 0):
             for cropped in image_cropped:
                 dst_path_image = join(directory, cropped["scale"])
                 if not exists(dst_path_image):
