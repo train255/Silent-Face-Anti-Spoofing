@@ -52,6 +52,7 @@ def update_config(args, conf):
     conf.devices = args.devices
     conf.patch_info = args.patch_info
     conf.checkpoint = args.checkpoint
+    conf.model_type = args.model_type
     w_input, h_input = get_width_height(args.patch_info)
     conf.input_size = [h_input, w_input]
     conf.kernel_size = get_kernel(h_input, w_input)

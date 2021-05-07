@@ -16,6 +16,7 @@ def parse_args():
     desc = "Silence-FAS"
     parser = argparse.ArgumentParser(description=desc)
     parser.add_argument("--device_ids", type=str, default="1", help="which gpu id, 0123")
+    parser.add_argument("--model_type", type=str, default="MultiFTNet", help="model type")
     parser.add_argument("--checkpoint", type=str, default="", help="checkpoint path")
     parser.add_argument("--patch_info", type=str, default="1_80x80",
                         help="[org_1_80x60 / 1_80x80 / 2.7_80x80 / 4_80x80]")

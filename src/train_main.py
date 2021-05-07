@@ -13,8 +13,16 @@ from tensorboardX import SummaryWriter
 
 from src.utility import get_time
 from src.model_lib.MultiFTNet import MultiFTNet
+from src.model_lib.MiniFASNet import MiniFASNetV1, MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
 from src.data_io.dataset_loader import get_train_loader
 
+MODEL_MAPPING = {
+    'MiniFASNetV1': MiniFASNetV1,
+    'MiniFASNetV2': MiniFASNetV2,
+    'MiniFASNetV1SE':MiniFASNetV1SE,
+    'MiniFASNetV2SE':MiniFASNetV2SE,
+	'MultiFTNet': MultiFTNet
+}
 
 class TrainMain:
     def __init__(self, conf):
@@ -118,7 +126,7 @@ class TrainMain:
             'embedding_size': self.conf.embedding_size,
             'conv6_kernel': self.conf.kernel_size}
 
-        model = MultiFTNet(**param).to(self.conf.device)
+        model = MODEL_MAPPING[self.conf.model_type](**param).to(self.conf.device)
         model = torch.nn.DataParallel(model, self.conf.devices)
         if self.conf.checkpoint != "":
             print("Load checkpoint", self.conf.checkpoint)
