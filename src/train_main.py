@@ -21,7 +21,7 @@ MODEL_MAPPING = {
     'MiniFASNetV2': MiniFASNetV2,
     'MiniFASNetV1SE':MiniFASNetV1SE,
     'MiniFASNetV2SE':MiniFASNetV2SE,
-	'MultiFTNet': MultiFTNet
+    'MultiFTNet': MultiFTNet
 }
 
 class TrainMain:
@@ -57,8 +57,8 @@ class TrainMain:
         self.model.train()
         running_loss = 0.
         running_acc = 0.
-        running_loss_cls = 0.
-        running_loss_ft = 0.
+        # running_loss_cls = 0.
+        # running_loss_ft = 0.
         is_first = True
         for e in range(self.start_epoch, self.conf.epochs):
             if is_first:
@@ -71,11 +71,12 @@ class TrainMain:
                 imgs = [sample, ft_sample]
                 labels = target
 
-                loss, acc, loss_cls, loss_ft = self._train_batch_data(imgs, labels)
-                running_loss_cls += loss_cls
-                running_loss_ft += loss_ft
+                loss, acc, = self._train_batch_data(imgs, labels)
+                # running_loss_cls += loss_cls
+                # running_loss_ft += loss_ft
                 running_loss += loss
                 running_acc += acc
+                
                 print("running_loss", running_loss)
                 self.step += 1
 
@@ -89,18 +90,18 @@ class TrainMain:
                     lr = self.optimizer.param_groups[0]['lr']
                     self.writer.add_scalar('Training/Learning_rate', lr, self.step)
                     print('Training/Learning_rate', lr, self.step)
-                    loss_cls_board = running_loss_cls / self.board_loss_every
-                    self.writer.add_scalar('Training/Loss_cls', loss_cls_board, self.step)
-                    print('Training/Loss_cls', loss_cls_board, self.step)
-                    loss_ft_board = running_loss_ft / self.board_loss_every
-                    self.writer.add_scalar('Training/Loss_ft', loss_ft_board, self.step)
-                    print('Training/Loss_ft', loss_ft_board, self.step)
+                    # loss_cls_board = running_loss_cls / self.board_loss_every
+                    # self.writer.add_scalar('Training/Loss_cls', loss_cls_board, self.step)
+                    # print('Training/Loss_cls', loss_cls_board, self.step)
+                    # loss_ft_board = running_loss_ft / self.board_loss_every
+                    # self.writer.add_scalar('Training/Loss_ft', loss_ft_board, self.step)
+                    # print('Training/Loss_ft', loss_ft_board, self.step)
 
                     running_loss = 0.
                     running_acc = 0.
-                    running_loss_cls = 0.
-                    running_loss_ft = 0.
-					
+                    # running_loss_cls = 0.
+                    # running_loss_ft = 0.
+                    
                 if self.step % self.save_every == 0 and self.step != 0:
                     time_stamp = get_time()
                     self._save_state(time_stamp, extra=self.conf.job_name)
@@ -113,16 +114,24 @@ class TrainMain:
     def _train_batch_data(self, imgs, labels):
         self.optimizer.zero_grad()
         labels = labels.to(self.conf.device)
-        embeddings, feature_map = self.model.forward(imgs[0].to(self.conf.device))
+        if self.conf.model_type == "MultiFTNet":
+            embeddings, feature_map = self.model.forward(imgs[0].to(self.conf.device))
+        else:
+            embeddings = self.model.forward(imgs[0].to(self.conf.device))
 
         loss_cls = self.cls_criterion(embeddings, labels)
-        loss_fea = self.ft_criterion(feature_map, imgs[1].to(self.conf.device))
-
-        loss = 0.5*loss_cls + 0.5*loss_fea
         acc = self._get_accuracy(embeddings, labels)[0]
+
+        if feature_map:
+            loss_fea = self.ft_criterion(feature_map, imgs[1].to(self.conf.device))
+            loss = 0.5*loss_cls + 0.5*loss_fea
+        else:
+            loss = loss_cls
+    
         loss.backward()
         self.optimizer.step()
-        return loss.item(), acc, loss_cls.item(), loss_fea.item()
+
+        return loss.item(), acc
 
     def _define_network(self):
         param = {
