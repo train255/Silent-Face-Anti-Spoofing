@@ -116,18 +116,14 @@ class TrainMain:
         labels = labels.to(self.conf.device)
         if self.conf.model_type == "MultiFTNet":
             embeddings, feature_map = self.model.forward(imgs[0].to(self.conf.device))
-        else:
-            embeddings = self.model.forward(imgs[0].to(self.conf.device))
-
-        loss_cls = self.cls_criterion(embeddings, labels)
-        acc = self._get_accuracy(embeddings, labels)[0]
-
-        if feature_map:
+            loss_cls = self.cls_criterion(embeddings, labels)
             loss_fea = self.ft_criterion(feature_map, imgs[1].to(self.conf.device))
             loss = 0.5*loss_cls + 0.5*loss_fea
         else:
-            loss = loss_cls
-    
+            embeddings = self.model.forward(imgs[0].to(self.conf.device))
+            loss = self.cls_criterion(embeddings, labels)
+
+        acc = self._get_accuracy(embeddings, labels)[0]
         loss.backward()
         self.optimizer.step()
 
