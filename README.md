@@ -89,7 +89,7 @@ cd Silent-Face-Anti-Spoofing
 ```  
 ### 训练
 ```
-python train.py --device_ids 0  --patch_info your_patch
+python train.py --device_ids 0  --patch_info your_patch --model_type 'MiniFASNetV1SE'
 ```  
 ### 测试
  ./resources/anti_spoof_models 活体检测的融合模型  

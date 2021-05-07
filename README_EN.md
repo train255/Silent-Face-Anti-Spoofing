@@ -94,7 +94,7 @@ cd Silent-Face-Anti-Spoofing
 ```  
 ### Train
 ```
-python train.py --device_ids 0  --patch_info your_patch
+python train.py --device_ids 0  --patch_info your_patch --model_type 'MiniFASNetV1SE'
 ```  
 ### Test
  ./resources/anti_spoof_models Fusion model of in living detection  
