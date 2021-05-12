@@ -76,9 +76,8 @@ def test(model_dir, device_id, num_classes, src_dir, dst_dir, draw_bbox):
             result_text = "FakeFace Score: {:.2f}".format(value)
             color = (0, 0, 255)
         
-        if debug == True:
-            print(label_text)
-            print("Prediction cost {:.2f} s".format(test_speed))
+        print(label_text)
+        print("Prediction cost {:.2f} s".format(test_speed))
 
         if draw_bbox == True:
             cv2.rectangle(
@@ -131,9 +130,6 @@ if __name__ == "__main__":
         help="number of classes")
     parser.add_argument(
         "--draw_bbox",
-        action='store_true')
-    parser.add_argument(
-        "--debug",
         action='store_true')
     args = parser.parse_args()
     test(args.model_dir, args.device_id, args.num_classes, args.src_dir, args.dst_dir, args.draw_bbox)
