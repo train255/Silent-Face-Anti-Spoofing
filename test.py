@@ -20,9 +20,6 @@ from src.utility import parse_model_name
 warnings.filterwarnings('ignore')
 
 
-SAMPLE_IMAGE_PATH = "./images/sample/"
-
-
 # 因为安卓端APK获取的视频流宽高比为3:4,为了与之一致，所以将宽高比限制为3:4
 def check_image(image):
     height, width, channel = image.shape
@@ -43,7 +40,6 @@ def test(model_dir, device_id, num_classes, src_dir, dst_dir, draw_bbox):
         image_name = os.path.basename(file_path)
         image = cv2.imread(file_path)
         image_bbox = model_test.get_bbox(image)
-        print(image_bbox)
         # if you have n clasees => prediction = np.zeros((1, n))
         prediction = np.zeros((1, num_classes))
         
@@ -72,14 +68,17 @@ def test(model_dir, device_id, num_classes, src_dir, dst_dir, draw_bbox):
         label = np.argmax(prediction)
         value = prediction[0][label]/count_model
         if label == 1:
-            print("Image '{}' is Real Face. Score: {:.2f}.".format(image_name, value))
+            label_text = "Image '{}' is Real Face. Score: {:.2f}.".format(image_name, value)
             result_text = "RealFace Score: {:.2f}".format(value)
             color = (255, 0, 0)
         else:
-            print("Image '{}' is Fake Face. Score: {:.2f}.".format(image_name, value))
+            label_text = "Image '{}' is Fake Face. Score: {:.2f}.".format(image_name, value)
             result_text = "FakeFace Score: {:.2f}".format(value)
             color = (0, 0, 255)
-        print("Prediction cost {:.2f} s".format(test_speed))
+        
+        if debug == True:
+            print(label_text)
+            print("Prediction cost {:.2f} s".format(test_speed))
 
         if draw_bbox == True:
             cv2.rectangle(
@@ -132,6 +131,9 @@ if __name__ == "__main__":
         help="number of classes")
     parser.add_argument(
         "--draw_bbox",
+        action='store_true')
+    parser.add_argument(
+        "--debug",
         action='store_true')
     args = parser.parse_args()
     test(args.model_dir, args.device_id, args.num_classes, args.src_dir, args.dst_dir, args.draw_bbox)
