@@ -15,6 +15,10 @@ import warnings
 import time
 
 from src.anti_spoof_predict import AntiSpoofPredict
+if os.path.isfile('./src/face_detect2.py'):
+    from src.face_detect2 import FaceModel
+else:
+    from src.face_detect import FaceModel
 from src.generate_patches import CropImage
 from src.utility import parse_model_name
 warnings.filterwarnings('ignore')
@@ -31,6 +35,7 @@ def check_image(image):
 
 
 def test(model_dir, device_id, num_classes, src_dir, dst_dir, draw_bbox):
+    face_model = FaceModel()
     model_test = AntiSpoofPredict(device_id)
     image_cropper = CropImage()
 
@@ -39,65 +44,71 @@ def test(model_dir, device_id, num_classes, src_dir, dst_dir, draw_bbox):
     for file_path in onlyfiles:
         image_name = os.path.basename(file_path)
         image = cv2.imread(file_path)
-        image_bbox = model_test.get_bbox(image)
-        # if you have n clasees => prediction = np.zeros((1, n))
-        prediction = np.zeros((1, num_classes))
-        
-        test_speed = 0
-        # sum the prediction from single model's result
-        count_model = 0
-        for model_name in os.listdir(model_dir):
-            h_input, w_input, model_type, scale = parse_model_name(model_name)
-            param = {
-                "org_img": image,
-                "bbox": image_bbox,
-                "scale": scale,
-                "out_w": w_input,
-                "out_h": h_input,
-                "crop": True,
-            }
-            if scale is None:
-                param["crop"] = False
-            img = image_cropper.crop(**param)
-            start = time.time()
-            prediction += model_test.predict(img, os.path.join(model_dir, model_name))
-            count_model = count_model + 1
-            test_speed += time.time()-start
-
-        # draw result of prediction
-        label = np.argmax(prediction)
-        value = prediction[0][label]/count_model
-        if label == 1:
-            label_text = "Image '{}' is Real Face. Score: {:.2f}.".format(image_name, value)
-            result_text = "RealFace Score: {:.2f}".format(value)
-            color = (255, 0, 0)
+        image_bbox = face_model.get_bbox(image)
+        print(image_bbox)
+        if image_bbox == [0, 0, 1, 1]:
+            dst_path_image = join(dst_dir, "not_detect_face")
+            if not exists(dst_path_image):
+                os.makedirs(dst_path_image)
+            cv2.imwrite(join(dst_path_image, image_name), image)
         else:
-            label_text = "Image '{}' is Fake Face. Score: {:.2f}.".format(image_name, value)
-            result_text = "FakeFace Score: {:.2f}".format(value)
-            color = (0, 0, 255)
-        
-        print(label_text)
-        print("Prediction cost {:.2f} s".format(test_speed))
+            # if you have n clasees => prediction = np.zeros((1, n))
+            prediction = np.zeros((1, num_classes))
+            test_speed = 0
+            # sum the prediction from single model's result
+            count_model = 0
+            for model_name in os.listdir(model_dir):
+                h_input, w_input, model_type, scale = parse_model_name(model_name)
+                param = {
+                    "org_img": image,
+                    "bbox": image_bbox,
+                    "scale": scale,
+                    "out_w": w_input,
+                    "out_h": h_input,
+                    "crop": True,
+                }
+                if scale is None:
+                    param["crop"] = False
+                img = image_cropper.crop(**param)
+                start = time.time()
+                prediction += model_test.predict(img, os.path.join(model_dir, model_name))
+                count_model = count_model + 1
+                test_speed += time.time()-start
 
-        if draw_bbox == True:
-            cv2.rectangle(
-                image,
-                (image_bbox[0], image_bbox[1]),
-                (image_bbox[0] + image_bbox[2], image_bbox[1] + image_bbox[3]),
-                color, 2)
-            cv2.putText(
-                image,
-                result_text,
-                (image_bbox[0], image_bbox[1] - 5),
-                cv2.FONT_HERSHEY_COMPLEX, 0.5*image.shape[0]/1024, color)
+            # draw result of prediction
+            label = np.argmax(prediction)
+            value = prediction[0][label]/count_model
+            if label == 1:
+                label_text = "Image '{}' is Real Face. Score: {:.2f}.".format(image_name, value)
+                result_text = "RealFace Score: {:.2f}".format(value)
+                color = (255, 0, 0)
+            else:
+                label_text = "Image '{}' is Fake Face. Score: {:.2f}.".format(image_name, value)
+                result_text = "FakeFace Score: {:.2f}".format(value)
+                color = (0, 0, 255)
+            
+            print(label_text)
+            print("Prediction cost {:.2f} s".format(test_speed))
 
-        dst_path_image = join(dst_dir, str(label))
-        if not exists(dst_path_image):
-            os.makedirs(dst_path_image)
+            if draw_bbox == True:
+                cv2.rectangle(
+                    image,
+                    (image_bbox[0], image_bbox[1]),
+                    (image_bbox[0] + image_bbox[2], image_bbox[1] + image_bbox[3]),
+                    color, 2)
+                cv2.putText(
+                    image,
+                    result_text,
+                    (image_bbox[0], image_bbox[1] - 5),
+                    cv2.FONT_HERSHEY_COMPLEX, 0.5*image.shape[0]/1024, color)
 
-        format_ = os.path.splitext(image_name)[-1]
-        result_image_name = image_name.replace(format_, "_result" + format_)
-        cv2.imwrite(os.path.join(dst_path_image, result_image_name), image)
+            dst_path_image = join(dst_dir, str(label))
+            if not exists(dst_path_image):
+                os.makedirs(dst_path_image)
+
+            format_ = os.path.splitext(image_name)[-1]
+            result_image_name = image_name.replace(format_, "_result" + format_)
+            cv2.imwrite(os.path.join(dst_path_image, result_image_name), image)
 
 
 if __name__ == "__main__":
