@@ -13,7 +13,10 @@ import warnings
 import time
 
 from src.anti_spoof_predict import AntiSpoofPredict
-from src.face_detect import FaceModel
+if os.path.isfile('./src/face_detect2.py'):
+    from src.face_detect2 import FaceModel
+else:
+    from src.face_detect import FaceModel
 from src.generate_patches import CropImage
 from src.utility import parse_model_name
 warnings.filterwarnings('ignore')
