@@ -38,8 +38,7 @@ def get_default_config():
 
     # log path
     conf.log_path = './saved_logs/jobs'
-    # tensorboard
-    conf.board_loss_every = 10
+
     # save model/iter
     conf.save_every = 30
 

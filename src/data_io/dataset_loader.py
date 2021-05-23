@@ -6,9 +6,10 @@
 # @Software : PyCharm
 
 from torch.utils.data import DataLoader
+from torch.utils.data.sampler import SubsetRandomSampler
 from src.data_io.dataset_folder import DatasetFolderFT
 from src.data_io import transform as trans
-
+import numpy as np
 
 def get_train_loader(conf):
     train_transform = trans.Compose([
@@ -22,12 +23,37 @@ def get_train_loader(conf):
         trans.ToTensor()
     ])
     root_path = '{}/{}'.format(conf.train_root_path, conf.patch_info)
-    trainset = DatasetFolderFT(root_path, train_transform,
+    dataset = DatasetFolderFT(root_path, train_transform,
                                None, conf.ft_width, conf.ft_height)
+
+    # Creating data indices for training and validation splits:
+    validation_split = .2
+    shuffle_dataset = True
+    random_seed= 42
+
+    dataset_size = len(dataset)
+    indices = list(range(dataset_size))
+    split = int(np.floor(validation_split * dataset_size))
+    if shuffle_dataset :
+        np.random.seed(random_seed)
+        np.random.shuffle(indices)
+    train_indices, val_indices = indices[split:], indices[:split]
+
+    # Creating PT data samplers and loaders:
+    train_sampler = SubsetRandomSampler(train_indices)
+    valid_sampler = SubsetRandomSampler(val_indices)
+
     train_loader = DataLoader(
-        trainset,
+        dataset,
         batch_size=conf.batch_size,
-        shuffle=True,
-        pin_memory=True,
-        num_workers=16)
-    return train_loader
+        sampler=train_sampler,
+        num_workers=16
+    )
+    val_loader = DataLoader(
+        dataset,
+        batch_size=conf.batch_size,
+        sampler=valid_sampler,
+        num_workers=16
+    )
+
+    return train_loader, val_loader
