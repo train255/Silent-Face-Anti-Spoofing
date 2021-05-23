@@ -97,8 +97,6 @@ class TrainMain:
                 self.writer.add_scalar('Valid/Learning_rate', lr)
                 print('Valid/Learning_rate', lr)
 
-        time_stamp = get_time()
-        self._save_state(time_stamp, extra=self.conf.job_name)
         self.writer.close()
 
     def _train_batch_data(self, imgs, labels, is_valid):
