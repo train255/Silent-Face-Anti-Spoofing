@@ -150,4 +150,4 @@ class TrainMain:
     def _save_state(self, time_stamp, extra=None):
         save_path = self.conf.model_path
         torch.save(self.model.state_dict(), save_path + '/' +
-                   ('{}_{}_model_iter-{}.pth'.format(time_stamp, extra)))
+                   ('{}_{}_model_iter.pth'.format(time_stamp, extra)))
