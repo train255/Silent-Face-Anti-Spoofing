@@ -66,7 +66,7 @@ class TrainMain:
                 imgs = [sample, ft_sample]
                 labels = target
 
-                loss, acc, = self._train_batch_data(imgs, labels, False)
+                loss, acc, = self._train_batch_data(imgs, labels, True)
                 self.writer.add_scalar('Training/Loss', loss)
                 print('Training/Loss', loss)
                 self.writer.add_scalar('Training/Acc', acc)
@@ -82,7 +82,7 @@ class TrainMain:
                 imgs = [sample, ft_sample]
                 labels = target
 
-                loss, acc, = self._train_batch_data(imgs, labels, True)
+                loss, acc, = self._train_batch_data(imgs, labels, False)
                 if val_loss is None or loss < val_loss:
                     val_loss = loss
                     time_stamp = get_time()
@@ -99,7 +99,7 @@ class TrainMain:
 
         self.writer.close()
 
-    def _train_batch_data(self, imgs, labels, is_valid):
+    def _train_batch_data(self, imgs, labels, is_train):
         self.optimizer.zero_grad()
         labels = labels.to(self.conf.device)
         if self.conf.model_type == "MultiFTNet":
@@ -113,7 +113,7 @@ class TrainMain:
 
         acc = self._get_accuracy(embeddings, labels)[0]
 
-        if is_valid == True:
+        if is_train == True:
             loss.backward()
             self.optimizer.step()
 
