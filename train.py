@@ -19,6 +19,7 @@ def parse_args():
     parser.add_argument("--model_type", type=str, default="MultiFTNet", help="model type")
     parser.add_argument("--epochs", type=int, default=25, help="epochs")
     parser.add_argument("--batch_size", type=int, default=1024, help="batch size")
+    parser.add_argument("--val_size", type=float, default=0.1, help="validation split")
     parser.add_argument("--checkpoint", type=str, default="", help="checkpoint path")
     parser.add_argument("--patch_info", type=str, default="1_80x80",
                         help="[org_1_80x60 / 1_80x80 / 2.7_80x80 / 4_80x80]")

@@ -39,14 +39,12 @@ def get_default_config():
     # log path
     conf.log_path = './saved_logs/jobs'
 
-    # save model/iter
-    conf.save_every = 30
-
     return conf
 
 
 def update_config(args, conf):
     conf.devices = args.devices
+    conf.val_size = args.val_size
     conf.patch_info = args.patch_info
     conf.checkpoint = args.checkpoint
     conf.epochs = args.epochs

@@ -27,13 +27,12 @@ def get_train_loader(conf):
                                None, conf.ft_width, conf.ft_height)
 
     # Creating data indices for training and validation splits:
-    validation_split = .2
     shuffle_dataset = True
     random_seed= 42
 
     dataset_size = len(dataset)
     indices = list(range(dataset_size))
-    split = int(np.floor(validation_split * dataset_size))
+    split = int(np.floor(conf.val_size * dataset_size))
     if shuffle_dataset :
         np.random.seed(random_seed)
         np.random.shuffle(indices)

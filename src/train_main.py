@@ -27,7 +27,6 @@ MODEL_MAPPING = {
 class TrainMain:
     def __init__(self, conf):
         self.conf = conf
-        self.save_every = conf.save_every
         self.start_epoch = 0
         self.train_loader, self.val_loader = get_train_loader(self.conf)
 
@@ -68,7 +67,7 @@ class TrainMain:
 
                 loss, acc, = self._train_batch_data(imgs, labels, True)
                 self.writer.add_scalar('Training/Loss', loss)
-                print('Training/Loss', loss)
+                print('\nTraining/Loss', loss)
                 self.writer.add_scalar('Training/Acc', acc)
                 print('Training/Acc', acc)
                 lr = self.optimizer.param_groups[0]['lr']
@@ -87,15 +86,12 @@ class TrainMain:
                     val_loss = loss
                     time_stamp = get_time()
                     self._save_state(time_stamp, extra=self.conf.job_name)
-                    print("Best val loss", val_loss)
+                    print("\nBest val loss", val_loss)
 
                 self.writer.add_scalar('Valid/Loss', loss)
-                print('Valid/Loss', loss)
+                print('\nValid/Loss', loss)
                 self.writer.add_scalar('Valid/Acc', acc)
                 print('Valid/Acc', acc)
-                lr = self.optimizer.param_groups[0]['lr']
-                self.writer.add_scalar('Valid/Learning_rate', lr)
-                print('Valid/Learning_rate', lr)
 
         self.writer.close()
 
