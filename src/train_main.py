@@ -68,8 +68,8 @@ class TrainMain:
                 loss, acc, = self._train_batch_data(imgs, labels, True)
                 self.writer.add_scalar('Training/Loss', loss)
                 print('\nTraining/Loss', loss)
-                self.writer.add_scalar('Training/Acc', acc)
-                print('Training/Acc', acc)
+                self.writer.add_scalar('Training/Acc', acc.item())
+                print('Training/Acc', acc.item())
                 lr = self.optimizer.param_groups[0]['lr']
                 self.writer.add_scalar('Training/Learning_rate', lr)
                 print('Training/Learning_rate', lr)
@@ -90,8 +90,8 @@ class TrainMain:
 
                 self.writer.add_scalar('Valid/Loss', loss)
                 print('\nValid/Loss', loss)
-                self.writer.add_scalar('Valid/Acc', acc)
-                print('Valid/Acc', acc)
+                self.writer.add_scalar('Valid/Acc', acc.item())
+                print('Valid/Acc', acc.item())
 
         self.writer.close()
 
