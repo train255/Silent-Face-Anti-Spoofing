@@ -52,6 +52,7 @@ class TrainMain:
 
     def _train_stage(self):
         val_loss = None
+        train_loss = None
         is_first = True
         for e in range(self.start_epoch, self.conf.epochs):
             if is_first:
@@ -66,6 +67,11 @@ class TrainMain:
                 labels = target
 
                 loss, acc, = self._train_batch_data(imgs, labels, True)
+                if train_loss is None or loss < train_loss:
+                    train_loss = loss
+                    time_stamp = get_time()
+                    self._save_state(str(time_stamp) + "_train", extra=self.conf.job_name)
+                    print("\nBest train loss", train_loss)
                 self.writer.add_scalar('Training/Loss', loss)
                 print('\nTraining/Loss', loss)
                 self.writer.add_scalar('Training/Acc', acc.item())
@@ -85,7 +91,7 @@ class TrainMain:
                 if val_loss is None or loss < val_loss:
                     val_loss = loss
                     time_stamp = get_time()
-                    self._save_state(time_stamp, extra=self.conf.job_name)
+                    self._save_state(str(time_stamp) + "_val", extra=self.conf.job_name)
                     print("\nBest val loss", val_loss)
 
                 self.writer.add_scalar('Valid/Loss', loss)
