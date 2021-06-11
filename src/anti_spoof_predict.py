@@ -39,9 +39,10 @@ class AntiSpoofPredict():
                 'embedding_size': 128,
                 'conv6_kernel': (5,5),
                 'num_classes': 2,
-                'img_channel': 3
+                'img_channel': 3,
+				'training': False
             }
-            self.model = MultiFTNet(**params)
+            self.model = MultiFTNet(**params).to(self.device)
         else:
             self.model = MODEL_MAPPING[model_type](conv6_kernel=self.kernel_size).to(self.device)
 

@@ -126,11 +126,16 @@ class TrainMain:
             'num_classes': self.conf.num_classes,
             'img_channel': self.conf.input_channel,
             'embedding_size': self.conf.embedding_size,
-            'conv6_kernel': self.conf.kernel_size}
+            'conv6_kernel': self.conf.kernel_size
+        }
+
+        if self.conf.model_type == "MultiFTNet" and self.conf.checkpoint != "":
+            param['training'] = True
+            param['checkpoint'] = self.conf.checkpoint
 
         model = MODEL_MAPPING[self.conf.model_type](**param).to(self.conf.device)
         model = torch.nn.DataParallel(model, self.conf.devices)
-        if self.conf.checkpoint != "":
+        if self.conf.checkpoint != "" and self.conf.model_type != "MultiFTNet":
             print("Load checkpoint", self.conf.checkpoint)
             model.load_state_dict(torch.load(self.conf.checkpoint))
         model.to(self.conf.device)
