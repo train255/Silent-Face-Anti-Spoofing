@@ -4,7 +4,6 @@
 # @Company : Minivision
 # @File : MultiFTNet.py
 # @Software : PyCharm
-import torch
 from torch import nn
 import torch.nn.functional as F
 from src.model_lib.MiniFASNet import MiniFASNetV1,MiniFASNetV2,MiniFASNetV1SE,MiniFASNetV2SE
@@ -33,16 +32,12 @@ class FTGenerator(nn.Module):
 
 
 class MultiFTNet(nn.Module):
-    def __init__(self, img_channel=3, num_classes=3, embedding_size=128, conv6_kernel=(5, 5), checkpoint='', training=True):
+    def __init__(self, img_channel=3, num_classes=3, embedding_size=128, conv6_kernel=(5, 5)):
         super(MultiFTNet, self).__init__()
         self.img_channel = img_channel
         self.num_classes = num_classes
-        self.training = training
         self.model = MiniFASNetV2SE(embedding_size=embedding_size, conv6_kernel=conv6_kernel,
                                       num_classes=num_classes, img_channel=img_channel)
-
-        if checkpoint != "":
-            self.model.load_state_dict(torch.load(checkpoint))
         if self.training:
             self.FTGenerator = FTGenerator(in_channels=128)
         self._initialize_weights()
