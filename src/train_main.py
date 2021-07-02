@@ -126,12 +126,7 @@ class TrainMain:
             'num_classes': self.conf.num_classes,
             'img_channel': self.conf.input_channel,
             'embedding_size': self.conf.embedding_size,
-            'conv6_kernel': self.conf.kernel_size
-        }
-
-        if self.conf.checkpoint != "":
-            param['training'] = True
-            param['checkpoint'] = self.conf.checkpoint
+            'conv6_kernel': self.conf.kernel_size}
 
         model = MODEL_MAPPING[self.conf.model_type](**param).to(self.conf.device)
         model = torch.nn.DataParallel(model, self.conf.devices)
